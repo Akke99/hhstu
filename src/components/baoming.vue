@@ -81,7 +81,7 @@
 
 
 
-					<el-button v-if="localStorage.getItem("role_id") == 1" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" slot="reference">删除</el-button>
+					<el-button v-if="role_id" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" slot="reference">删除</el-button>
 
 
 
@@ -125,15 +125,22 @@
 				formLabelWidth: '120px',
 				landsoure: "1",
 				data: "",
+				role_id:""
 				
 			}
 		},
 		methods: {
+			//判断角色id
+			role(){
+				if(localStorage.getItem("role_id") == 3){
+					this.role_id='3'
+				}
+			},
 			handleDelete(index) {
 				console.log(localStorage.getItem("role_id"));
 				this.$axios({
 					method: "DELETE",
-					url: "http://192.168.0.107:8000/api/delete_student_detail/" + this.tableData[index].id + "/",
+					url: "http://192.168.20.67:8000/api/delete_student_detail/" + this.tableData[index].id + "/",
 					data: {
 						user_id: localStorage.getItem("user_id")
 					}
@@ -168,7 +175,7 @@
 					console.log(this.form.id)
 					this.$axios({
 						method: "PUT",
-						url: "http://192.168.0.107:8000/api/update_student_detail/" + this.form.id + "/",
+						url: "http://192.168.20.67:8000/api/update_student_detail/" + this.form.id + "/",
 						data: this.data,
 					}).then(res => {
 						location.reload()
@@ -188,7 +195,7 @@
 				this.multipleSelection = val;
 			},
 			
-			//土地编辑
+			//学生编辑
 			handleEdit(index, row) {
 				console.log(this.tableData[index]);
 				this.form.name = this.tableData[index].name
@@ -210,8 +217,8 @@
 				this.page =  val
 				this.$axios({
 					method: "GET",
-					url: "http://192.168.20.67:8001/api/get_land_resources/?user_id=" + localStorage.getItem("user_id") + "&" +
-						"page=" + _this.page,
+					url: "http://192.168.20.67:8000/api/get_students/?user_id=" + localStorage.getItem("user_id") + "&" +
+					"page=" + _this.page,
 				}).then(res => {
 					console.log(res.data.count)
 				
@@ -240,9 +247,10 @@
 		//页面刷新时候加载页面数据
 		created() {
 			var _this = this;
+			_this.role()
 			this.$axios({
 				method: "GET",
-				url: "http://192.168.0.107:8000/api/get_students/?user_id=" + localStorage.getItem("user_id") + "&" +
+				url: "http://192.168.20.67:8000/api/get_students/?user_id=" + localStorage.getItem("user_id") + "&" +
 					"page=" + _this.page,
 			}).then(res => {
 				console.log(res.data.data)

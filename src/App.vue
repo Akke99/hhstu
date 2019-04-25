@@ -4,13 +4,13 @@
 			<el-header v-if="$route.path=='/regist'||$route.path=='/login'">
 				<div>{{$router.path}}</div>
 			</el-header>
-			<el-header v-if="$route.path=='/homepage'||$route.path=='/baoming'||$route.path=='/admissions'||$route.path=='/chat'">
+			<el-header v-if="$route.path=='/homepage'||$route.path=='/baoming'||$route.path=='/admissions'||$route.path=='/chat'||$route.path=='/zhuzhuangtu'">
 				<el-menu :default-active="activeIndex2" class="el-menu-demo center_css" mode="horizontal" @select="handleSelect"
 				 background-color="#B3C0D1" text-color="#fff" active-text-color="#ffd04b" id="meau">
 					<el-menu-item index="1" target="_blank"><a>学校概况</a></el-menu-item>
-					<el-menu-item index="2"><a href="#" target="_blank">招生情况</a></el-menu-item>
-					<el-menu-item index="3"><a href="#" target="_blank">聊天室</a></el-menu-item>
-					<el-menu-item index="4"><a target="_blank">预报名</a></el-menu-item>
+					<el-menu-item index="2" target="_blank"><a>招生情况</a></el-menu-item>
+					<el-menu-item index="3" target="_blank"><a>聊天室</a></el-menu-item>
+					<el-menu-item index="4" target="_blank"><a>预报名</a></el-menu-item>
 				</el-menu>
 			</el-header>
 			<el-main>
@@ -52,7 +52,8 @@
 			}
 		},
 		created() {
-			localStorage.setItem("index",this.$router.path=='/login'?"1":this.$router.path=='/baoming'?"4":this.$router.path=='/admissions'?"2":"1")
+			localStorage.setItem("index",this.$route.path=='/homepage'?"1":this.$route.path=='/baoming'?"4":this.$route.path=='/admissions'?"2":"1")
+			console.log(this.$route.path)
 		}
 	}
 </script>

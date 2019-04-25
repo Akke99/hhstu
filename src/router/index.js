@@ -8,57 +8,57 @@ import baoming from '@/components/baoming'
 import PPM from '@/components/PPM'
 import admissions from '@/components/admissions'
 import add_student from '@/components/add_student'
-import chat from '@/components/chat'
+import zhuzhuangtu from '@/components/zhuzhuangtu'
+// import chat from '@/components/chat'
 
 Vue.use(Router)
 
 
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
-		{
-		  path: '/login',
-		  name: 'login',
-		  component: login
+	routes: [{
+			path: '/',
+			name: 'HelloWorld',
+			component: HelloWorld
 		},
 		{
-		  path: '/regist',
-		  name: 'regist',
-		  component: regist
+			path: '/login',
+			name: 'login',
+			component: login
 		},
 		{
-		  path: '/homepage',
-		  name: 'homepage',
-		  component: homepage
+			path: '/regist',
+			name: 'regist',
+			component: regist
 		},
 		{
-		  path: '/baoming',
-		  name: 'baoming',
-		  component: baoming
+			path: '/homepage',
+			name: 'homepage',
+			component: homepage
 		},
 		{
-		  path: '/PPM',
-		  name: 'PPM',
-		  component: PPM
+			path: '/baoming',
+			name: 'baoming',
+			component: baoming
 		},
 		{
-		  path: '/admissions',
-		  name: 'admissions',
-		  component: admissions
+			path: '/PPM',
+			name: 'PPM',
+			component: PPM
 		},
 		{
-		  path: '/add_student',
-		  name: 'add_student',
-		  component: add_student
+			path: '/admissions',
+			name: 'admissions',
+			component: admissions
 		},
 		{
-		  path: '/chat',
-		  name: 'chat',
-		  component: chat
+			path: '/add_student',
+			name: 'add_student',
+			component: add_student,
+		},
+		{
+			path: '/zhuzhuangtu',
+			name: 'zhuzhuangtu',
+			component: zhuzhuangtu
 		}
-  ]
+	]
 })

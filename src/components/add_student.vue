@@ -1,7 +1,9 @@
 <template>
 	<div class="add_css">
 		<div>姓名：<input v-model="form_add.name"></input></div>
-		<div>性别：<input v-model="form_add.sex"></input></div>
+		<div>性别：<select name="public-choice" v-model="form_add.sex" >
+				<option :value="coupon.id" v-for="coupon in couponList">{{coupon.name}}</option>
+			</select></div>
 		<div>年龄：<input v-model="form_add.age"></input></div>
 		<div>报考专业：<input v-model="form_add.major"></input></div>
 		<div>报考系别：<input v-model="form_add.department"></input></div>
@@ -23,8 +25,19 @@
 					department: "",
 					academy: "",
 					location: "",
-				        },
-				data: ""
+				},
+				data: "",
+				couponList: [{
+						id: '男',
+						name: '男'
+					},
+					{
+						id: '女',
+						name: '女'
+					},
+				
+				],
+				
 			}
 		},
 		methods: {
@@ -40,8 +53,9 @@
 					location: _this.form_add.location,
 					user_id: localStorage.getItem("user_id")
 				}
+				console.log(_this.data)
 				_this.$axios({
-					url: "http://192.168.0.107:8000/api/create_student/",
+					url: "http://192.168.20.67:8000/api/create_student/",
 					method: "POST",
 					data: _this.data
 				}).then((res) => {
