@@ -250,7 +250,7 @@
 			_this.role()
 			this.$axios({
 				method: "GET",
-				url: "http://192.168.20.67:8000/api/get_students/?user_id=" + localStorage.getItem("user_id") + "&" +
+				url: "http://127.0.0.1:8000/api/get_students/?user_id=" + localStorage.getItem("user_id") + "&" +
 					"page=" + _this.page,
 			}).then(res => {
 				console.log(res.data.data)

@@ -34,7 +34,7 @@
 				} else {
 					this.$axios({
 						method: "POST",
-						url: 'http://192.168.20.67:8000/api/login/',
+						url: 'http://127.0.0.1:8000/api/login/',
 						data: {
 							name: this.username,
 							pwd: this.pwd

@@ -1,17 +1,41 @@
 <template>
-	<div class="main_css">
-
-		<div class="seven_echarts" id="seven" :style="{width: '600px', height: '350px'}"></div>
-
-		<div id="myChart" :style="{width: '600px', height: '350px'}"></div>
+	<div>
+		<div class="main_css">
+			<div class="seven_echarts" id="seven" :style="{width: '600px', height: '350px'}"></div>
+			<div id="myChart" :style="{width: '600px', height: '350px'}"></div>
+		</div>
+		<div class='area_city'>
+			<div style="display: inline-block;width: 5%;height: 30px;">城市 ></div>
+			<dd class="city_info">
+				<a style="color: crimson;cursor: pointer;" @click="city_t">不限 ></a>
+				<a v-for="(item) in city_data" href="#"  @click="city_team(item)">{{ item }}
+				</a>
+			</dd>
+		</div>
+		<div class="team">
+			<el-collapse v-model="activeNames" @change="handleChange">
+				<el-collapse-item v-for="(item,index) in tableData" :key="index" :title="item.name" :name="index + 1">
+					<template>
+						<el-table :data="item.teacher_list" style="width: 100%">
+							<el-table-column prop="name" label="姓名" width="180">
+							</el-table-column>
+							<el-table-column prop="sex" label="地区">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-collapse-item>
+			</el-collapse>
+		</div>
+		<el-pagination background layout="prev, pager, next" :page-size='5' :total="count" @current-change="handleCurrentChange">
+		</el-pagination>
 	</div>
-
 </template>
 
 <script type="text/javascript">
 	export default {
 		data() {
 			return {
+				count: 1,
 				seven1: {
 					seven_chart: null,
 					month_chart: null,
@@ -219,28 +243,50 @@
 							barWidth: 20 //设置柱子宽度，单位为px
 						}],
 					}
-				}
+				},
+				city_data: [],
+				activeNames: [],
+				team_Data: [],
+				tableData: [{
+					id: "1",
+					name: "1",
+					county: "1"
+				}],
+				page:1
+
 			}
 
 		},
 		mounted: function() {
 			this.get_echarts();
-			this.draw();
+
 		},
 		methods: {
+			handleChange(val) {
+				console.log(val);
+			},
 			get_echarts: function() {
+				this.myChart = this.$echarts.init(document.getElementById('myChart'))
 				this.seven_chart = this.$echarts.init(document.getElementById("seven"));
 				// 把配置和数据放这里
 				this.$axios({
 					method: "GET",
-					url: "http://192.168.20.67:8000/api/getinfo_admission/?user_id=" + localStorage.getItem("user_id"),
+					url: "http://127.0.0.1:8000/api/getinfo_admission/?user_id=" + localStorage.getItem("user_id"),
 				}).then(res => {
 					// console.log(res)
+					//渲染近年来招生人数图片
 					this.seven1.seven_option.xAxis.data = res.data.data_year_count.year
 					this.seven1.seven_option.series[0].data = res.data.data_year_count.peo_count
 					// console.log(this.seven1.seven_option)
 					this.seven_chart.setOption(this.seven1.seven_option)
 					// })
+					//渲染TOP10图片
+					this.zhuzhuang.option.xAxis.data = res.data.data_top_ten_count.department
+					this.zhuzhuang.option.series[0].data = res.data.data_top_ten_count.peo_top
+					// console.log(this.zhuzhuang.option)
+					this.myChart.setOption(this.zhuzhuang.option); //设置option
+					this.seven_chart.setOption(this.seven1.seven_option)
+
 				})
 
 			},
@@ -253,34 +299,79 @@
 				this.seven_chart = null;
 				this.myChart = null;
 			},
-			draw() {
-				// 初始化echarts实例
-				this.myChart = this.$echarts.init(document.getElementById('myChart'))
-				// 绘制图表
-				;
+			area_id_change() {
+				if (localStorage.getItem("area_id") == "") {
+					console.log(localStorage.getItem("area_id"))
+					return false
+				}
+			},
+			//点击页码刷新数据
+			handleCurrentChange(val) {
+				this.page = val
+				console.log(this.page)
+				if(localStorage.getItem('city') == null){
+					var url_a = "http://192.168.20.67:8000/api/getinfo_admission/?user_id=" + localStorage.getItem("user_id") + "&page=" + this.page
+				}else{
+					var url_a = "http://192.168.20.67:8000/api/getinfo_admission/?user_id=" + localStorage.getItem("user_id") + "&page=" + this.page + "&city=" + localStorage.getItem('city')
+				}
+				console.log(url_a)
+				this.$axios({
+					method: "GET",
+					url: url_a,
+				}).then(res => {
+					this.city_data = res.data.city_data.citys
+					this.tableData = res.data.team_data
+					this.count = res.data.team_count
+					
+				})
+			},
+			//点击城市刷新信息
+			city_team(item){
+				localStorage.setItem("city",item)
+				console.log(this.page)
+				this.$axios({
+					method: "GET",
+					url: "http://192.168.20.67:8000/api/getinfo_admission/?user_id=" + localStorage.getItem("user_id") + "&" +
+						"page=1" +"&city="+item,
+				}).then(res => {
+					this.city_data = res.data.city_data.citys
+					this.tableData = res.data.team_data
+					this.count = res.data.team_count
+					console.log(res)
+					console.log(this.count)
+				})
+			},
+			city_t(){
+				 localStorage.removeItem('city')
+				 
 				this.$axios({
 					method: "GET",
 					url: "http://192.168.20.67:8000/api/getinfo_admission/?user_id=" + localStorage.getItem("user_id"),
 				}).then(res => {
-					// console.log(res)
-					this.zhuzhuang.option.xAxis.data = res.data.data_top_ten_count.department
-					this.zhuzhuang.option.series[0].data = res.data.data_top_ten_count.peo_top
-					console.log(this.zhuzhuang.option)
-					this.myChart.setOption(this.zhuzhuang.option); //设置option
-					// })
+					console.log(res)
+					this.city_data = res.data.city_data.citys
+					this.tableData = res.data.team_data
+					this.count = res.data.team_count
+					
 				})
-				//防止越界，重绘canvas
-				// window.onresize = myChart.resize;
-
 			}
 		},
-
-
-
+		created() {
+			this.$axios({
+				method: "GET",
+				url: "http://127.0.0.1:8000/api/getinfo_admission/?user_id=" + localStorage.getItem("user_id"),
+			}).then(res => {
+				
+				this.city_data = res.data.city_data.citys
+				this.tableData = res.data.team_data
+				this.count = res.data.team_count
+				
+			})
+		}
 	}
 </script>
 
-<style type="text/css">
+<style>
 	.main_css {
 		display: flex;
 		/* 横向 */
@@ -288,11 +379,6 @@
 		/* 纵向 */
 		align-items: center;
 	}
-
-	/* .content {
-		width: 100%;
-		
-	} */
 
 	.content p {
 		margin-top: 1rem;
@@ -303,5 +389,38 @@
 	.seven_echarts {
 		height: 20rem;
 		width: 40%;
+	}
+
+	.area_city {
+		width: 90%;
+		height: 30px;
+		margin-left: 5%;
+
+		background-color: #FFFFFF;
+		display: flex;
+		/* 横向 */
+		justify-content: space-around;
+		/* 纵向 */
+		align-items: center;
+		line-height: 30px;
+	}
+
+	.city_info {
+		width: 93%;
+		/* 弹性 */
+
+		display: flex;
+		/* 横向 */
+		justify-content: space-around;
+		/* 纵向 */
+		align-items: center;
+		line-height: 30px;
+	}
+
+	.team {
+		width: 88%;
+		margin-left: 6%;
+		margin-top: 20px;
+		height: 240px;
 	}
 </style>
